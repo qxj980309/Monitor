@@ -1,5 +1,6 @@
 package com.example.monitor.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.monitor.entity.Certification;
 import com.example.monitor.mapper.CertificationMapper;
 import com.example.monitor.service.CertificationService;
@@ -21,7 +22,7 @@ public class CertificationServiceImpl implements CertificationService {
     @Override
     public int insertOne(Certification certification) {
         if (Objects.nonNull(certification) && certification.getSysName()!=null) {
-            updateInfo(certification);
+            selectAndUpdate(certification);
             return certificationMapper.insert(certification);
         }
         return 0;
@@ -47,7 +48,7 @@ public class CertificationServiceImpl implements CertificationService {
     }
 
 
-    private void updateInfo(Certification certification) {
+    private void selectAndUpdate(Certification certification) {
         Certification update = certificationMapper.selectInfo(certification.getSignOrg(), certification.getType(),
                 certification.getSysName(), certification.getEnvironment(), certification.getInteractedSystem());
         if (Objects.nonNull(update)) {
@@ -87,5 +88,12 @@ public class CertificationServiceImpl implements CertificationService {
     @Override
     public int infoDel() {
         return certificationMapper.infoDel();
+    }
+
+    @Override
+    public int updateInfo(Certification certification) {
+        QueryWrapper<Certification> queryWrapper = new QueryWrapper<Certification>();
+        int c = certificationMapper.update(certification,queryWrapper);
+        return c;
     }
 }

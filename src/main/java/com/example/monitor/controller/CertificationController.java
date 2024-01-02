@@ -24,6 +24,15 @@ public class CertificationController {
         return certificationService.insertList(certificationList);
     }
 
+    @PostMapping("/updateInfo")
+//    public int updateInfo(@RequestBody String signOrg , @RequestBody String type, @RequestBody String sysName,
+//                          @RequestBody String environment, @RequestBody String interactedSystem){
+//        return certificationService.updateInfo(signOrg,type,sysName,environment,interactedSystem);
+//    }
+    public int updateInfo(@RequestBody Certification certification){
+        return certificationService.updateInfo(certification);
+    }
+
     @PostMapping("/info")
     public List<Certification> infoList(){
         return certificationService.findInfo();

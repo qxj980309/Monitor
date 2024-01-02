@@ -15,4 +15,8 @@ public interface CertificationService {
     int InfoUpdate();
 
     int infoDel();
+
+    int updateInfo(Certification certification);
+
+//    int updateInfo(String signOrg, String type, String sysName, String environment, String interactedSystem);
 }
