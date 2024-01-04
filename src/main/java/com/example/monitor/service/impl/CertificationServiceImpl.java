@@ -20,7 +20,7 @@ public class CertificationServiceImpl implements CertificationService {
     private CertificationMapper certificationMapper;
 
     @Override
-    public int insertOne(Certification certification) {
+    public int save(Certification certification) {
         if (Objects.nonNull(certification) && certification.getSysName()!=null) {
             selectAndUpdate(certification);
             return certificationMapper.insert(certification);
@@ -29,7 +29,7 @@ public class CertificationServiceImpl implements CertificationService {
     }
 
     @Override
-    public int insertList(List<Certification> certificationList) {
+    public int saveBatch(List<Certification> certificationList) {
         int count = 0;
         if (certificationList.size()>0){
             for (Certification certification : certificationList) {
@@ -39,17 +39,12 @@ public class CertificationServiceImpl implements CertificationService {
                     count++;
                 }
             }
-/*            for (Certification c : certificationList) {
-                count = certificationMapper.insert(c);
-                count++;
-            }*/
         }
         return count;
     }
 
-
     private void selectAndUpdate(Certification certification) {
-        Certification update = certificationMapper.selectInfo(certification.getSignOrg(), certification.getType(),
+        Certification update = certificationMapper.selectOne(certification.getSignOrg(), certification.getType(),
                 certification.getSysName(), certification.getEnvironment(), certification.getInteractedSystem());
         if (Objects.nonNull(update)) {
             update.setDiscardFlag("y");
@@ -58,26 +53,23 @@ public class CertificationServiceImpl implements CertificationService {
     }
 
     @Override
-    public List<Certification> findInfo() {
-        List<Certification> certificationList = certificationMapper.findInfo();
+    public List<Certification> list() {
+        List<Certification> certificationList = certificationMapper.selectList();
         List<Certification> certifications =new ArrayList<>();
         if (Objects.nonNull(certificationList)){
             for (Certification c : certificationList) {
                 Certification certification = new Certification();
-                Date date = c.getEndTime();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String endDate = sdf.format(date);
+                String endDate = new SimpleDateFormat("yyyy-MM-dd").format(c.getEndDate());
                 String users = c.getOtherUsers();
                 if (StringUtils.isBlank(c.getOtherUsers())){
-                    certification.setNote(c.getSysName()+c.getEnvironment()+"环境的"+c.getType()+"将于"+endDate+"到期");
+                    certification.setNote(c.getSysName()+c.getEnvironment()+"环境的"+c.getType()+"证书将于"+endDate+"到期");
                 } else {
-                    certification.setNote(c.getSysName()+c.getEnvironment()+"环境和关联系统"+users+"的"+c.getType()+"将于"+endDate+"到期");
+                    certification.setNote(c.getSysName()+c.getEnvironment()+"环境和关联系统"+users+"的"+c.getType()+"证书将于"+endDate+"到期");
                 }
                 certifications.add(certification);
             }
-            return certifications;
         }
-        return null;
+        return certifications;
     }
 
     @Override
@@ -86,14 +78,23 @@ public class CertificationServiceImpl implements CertificationService {
     }
 
     @Override
-    public int infoDel() {
-        return certificationMapper.infoDel();
+    public int remove() {
+        return certificationMapper.remove();
     }
 
     @Override
     public int updateInfo(Certification certification) {
-        QueryWrapper<Certification> queryWrapper = new QueryWrapper<Certification>();
-        int c = certificationMapper.update(certification,queryWrapper);
-        return c;
+        // 1. 更新的字段
+        Certification update = new Certification();
+        update.setDiscardFlag("y");
+        // 2.更新的条件
+        QueryWrapper<Certification> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(StringUtils.isNotEmpty(certification.getSignOrg()),"sign_org",certification.getSignOrg());
+        queryWrapper.eq(StringUtils.isNotEmpty(certification.getType()),"type",certification.getType());
+        queryWrapper.eq(StringUtils.isNotEmpty(certification.getSysName()),"sys_name",certification.getSysName());
+        queryWrapper.eq(StringUtils.isNotEmpty(certification.getEnvironment()),"environment",certification.getEnvironment());
+        queryWrapper.eq(StringUtils.isNotEmpty(certification.getInteractedSystem()),"interacted_system",certification.getInteractedSystem());
+        // 3.更新操作
+        return certificationMapper.update(update,queryWrapper);
     }
 }

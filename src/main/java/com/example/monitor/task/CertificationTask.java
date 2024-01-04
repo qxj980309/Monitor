@@ -22,30 +22,30 @@ public class CertificationTask {
 
         @Resource
         private CertificationService certificationService;
-//        // 每周执行一次，获取需要预警的数据
-        @Scheduled(cron = "0 30 14 ? * 5") //每周五下午两点半 执行
-        public void doTaskSelect(){
-            log.info("定时任务开始~");
-            List<Certification> certifications= certificationService.findInfo();
-            ArrayList<String> list = new ArrayList();
-            for (Certification c : certifications) {
-                String note = c.getNote();
-                list.add(note);
-            }
-            log.info("当前时间：{}\t\t任务：cron task，每5秒执行一次",list,System.currentTimeMillis());
-            log.info("定时任务结束~");
-        }
-
-//        @Scheduled(cron = "*/5 * * * * ?")
-//        public void task2() {
-//            List<Certification> certifications= certificationService.findInfo();
+        // 每周执行一次，获取需要预警的数据
+//        @Scheduled(cron = "0 30 14 ? * 5") //每周五下午两点半 执行
+//        public void doTaskSelect(){
+//            log.info("定时任务开始~");
+//            List<Certification> certifications= certificationService.list();
 //            ArrayList<String> list = new ArrayList();
 //            for (Certification c : certifications) {
 //                String note = c.getNote();
 //                list.add(note);
 //            }
 //            log.info("当前时间：{}\t\t任务：cron task，每5秒执行一次",list,System.currentTimeMillis());
+//            log.info("定时任务结束~");
 //        }
+
+        @Scheduled(cron = "*/5 * * * * ?")
+        public void task2() {
+            List<Certification> certifications= certificationService.list();
+            ArrayList<String> list = new ArrayList();
+            for (Certification c : certifications) {
+                String note = c.getNote();
+                list.add(note);
+            }
+            log.info("当前时间：{}\t\t任务：cron task，每5秒执行一次",list,System.currentTimeMillis());
+        }
 
 //        @Scheduled(cron = "0 0 8 * * ?") //  每天中午8点触发
 //        public void doTaskUpdate(){
@@ -55,7 +55,7 @@ public class CertificationTask {
 
         @Scheduled(cron = "0 0 18 28-31 * ?") //  每月的最后一个星期五上午8点触发
         public void doTaskDel(){
-            int count = certificationService.infoDel();
+            int count = certificationService.remove();
             log.info("当前时间：{}\t\t任务：cron task，月的最后一个星期五上午8点执行一次",count,System.currentTimeMillis());
         }
     }

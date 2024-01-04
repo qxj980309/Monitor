@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -17,7 +18,7 @@ public class Certification {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "主键")
-    @TableId(value = "id",type = IdType.AUTO)
+    @TableId(value = "id",type = IdType.ASSIGN_ID)
     @JsonInclude(value= JsonInclude.Include.NON_NULL)
     private Integer id;
 
@@ -28,11 +29,12 @@ public class Certification {
     private String  sysName;
 
     @ApiModelProperty(value = "证书关联系统")
+    @NotBlank(message = "证书关联系统(合作银行)不能为空")
     @TableField(value = "interacted_system")
     @JsonInclude(value= JsonInclude.Include.NON_NULL)
     private String  interactedSystem;
 
-    @ApiModelProperty(value = "证书关联系统")
+    @ApiModelProperty(value = "其他证书使用者")
     @TableField(value = "other_users")
     @JsonInclude(value= JsonInclude.Include.NON_NULL)
     private String  otherUsers;
@@ -48,6 +50,7 @@ public class Certification {
     private String type;
 
     @ApiModelProperty(value = "签发机构")
+    @NotBlank(message = "签发机构不能为空")
     @TableField(value = "sign_org")
     @JsonInclude(value= JsonInclude.Include.NON_NULL)
     private String  signOrg;
@@ -61,10 +64,10 @@ public class Certification {
 
     @ApiModelProperty(value = "到期时间")
     @NotBlank(message = "到期时间不能为空")
-    @TableField(value = "end_time")
+    @TableField(value = "end_date")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT-8")
     @JsonInclude(value= JsonInclude.Include.NON_NULL)
-    private Date endTime;
+    private Date endDate;
 
     @ApiModelProperty(value = "环境")
     @NotBlank(message = "环境不能为空")

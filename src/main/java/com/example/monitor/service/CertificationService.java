@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface CertificationService {
 
-    List<Certification> findInfo();
+    List<Certification> list();
 
-    int insertOne(Certification certification);
+    int save(Certification certification);
 
-    int insertList(List<Certification> certificationList);
+    int saveBatch(List<Certification> certificationList);
 
     int InfoUpdate();
 
-    int infoDel();
+    int remove();
 
     int updateInfo(Certification certification);
 
